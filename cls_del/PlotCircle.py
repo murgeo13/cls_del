@@ -12,21 +12,6 @@ from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 plt.rcParams.update({'font.size': 22})
 
-
-def default_func(finds, circos):
-    global percentile, cmap
-    widths = np.log(finds[:, 4]/finds[:, 6])
-    
-    sm = ScalarMappable(norm=Normalize(vmin=np.percentile(widths, percentile    ),
-                                       vmax=np.percentile(widths, 100 - percentile    )),
-                    cmap=cmap)
-    colour_map = sm.to_rgba(widths)
-    circos.colorbar(vmin=np.percentile(widths, percentile),
-                    vmax=np.percentile(widths, 100 - percentile),
-                    cmap=cmap,
-                    colorbar_kws=dict(label="log-liklihood"))
-    return colour_map
-
 def PlotCircle(average_covers, average_all_covers, finds,
                CHRNAME,
                OUTDIR = "./cls_plots",
@@ -71,6 +56,36 @@ def PlotCircle(average_covers, average_all_covers, finds,
     None.
 
     """
+    def default_func(finds, circos):
+        """
+        
+
+        Parameters
+        ----------
+        finds : np.array
+            row for each cluster includes
+            First_mean First_std Second_mean Second_std Supporting_reads Total_reads Expected_count
+        circos : pycirclize.circos.Circos
+            plot of chromosome
+
+        Returns
+        -------
+        colour_map : np.array
+            colour for each find
+
+        """
+        global percentile, cmap
+        widths = np.log(finds[:, 4]/finds[:, 6])
+        
+        sm = ScalarMappable(norm=Normalize(vmin=np.percentile(widths, percentile    ),
+                                           vmax=np.percentile(widths, 100 - percentile    )),
+                        cmap=cmap)
+        colour_map = sm.to_rgba(widths)
+        circos.colorbar(vmin=np.percentile(widths, percentile),
+                        vmax=np.percentile(widths, 100 - percentile),
+                        cmap=cmap,
+                        colorbar_kws=dict(label="log-liklihood"))
+        return colour_map
     
     LEN = average_covers.shape[1]
       
