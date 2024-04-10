@@ -1,9 +1,9 @@
 # переменные для script.sh
 
-ref_dir="/home/imperor/Desktop/Desktop/yeastR/ref/SC288c_bowtie/" # папка для индексов
-ref="/home/imperor/Desktop/Desktop/reference_yeast/S288C/GCF_000146045.2_R64_genomic.fna" # референс .fna
+ref_dir="/path/to/dir/SC288c_bowtie/" # папка для индексов
+ref="/path/to/dir/GCF_000146045.2_R64_genomic.fna" # референс .fna
 indexes=${ref_dir}/SC288c # путь к индексам (название файлов без .1.bt2)
-work_dir="/home/imperor/Desktop/Desktop/yeastR" # основная папка
+work_dir="/path/to/dir" # основная папка
 out_dir="./results"
 log_dir="${out_dir}/log"
 common_F=${work_dir}/reads/wt/DK_wt_61_TGACCA_L008_R1_
