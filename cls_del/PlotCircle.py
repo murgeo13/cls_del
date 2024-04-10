@@ -21,7 +21,7 @@ def PlotCircle(average_covers, average_all_covers, finds,
                all_cover_colour = "green",
                percentile = 10,
                cmap = "RdPu",
-               func=default_func):
+               func=None):
     """
     Plot chromosome map with deletions coloured by liklihood.
 
@@ -50,6 +50,8 @@ def PlotCircle(average_covers, average_all_covers, finds,
         Percenteile to cut extremly high and low likliehood in colormap. The default is 10.
     cmap : str or matplotlib.colors.Colormap, optional
         Colormap for gradient by finds' liklihoods. The default is "RdPu".
+    func : func
+        Function generating colours for each find and adding special legend to plot.
 
     Returns
     -------
@@ -86,7 +88,10 @@ def PlotCircle(average_covers, average_all_covers, finds,
                         cmap=cmap,
                         colorbar_kws=dict(label="log-liklihood"))
         return colour_map
-    
+
+    if func is None:
+        func = default_func
+                 
     LEN = average_covers.shape[1]
       
     sectors = {f"{CHRNAME}" : LEN}
