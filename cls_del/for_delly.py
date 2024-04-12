@@ -67,64 +67,38 @@ with open(f"{args.out}/delly_features.tsv", "a") as out:
     print("Labels\tFirst_mean\tFirst_std\tSecond_mean\tSecond_std\tSupporting_reads\tTotal_reads\tExpected_count", file = out)
     for label, row in zip(list_labels, finds):
         print(label, *row, sep="\t", file=out) 
-        
-       
-LEN = average_covers.shape[1]
-  
-sectors = {f"{CHRNAME}" : LEN}
-circos = Circos(sectors, space=0)
-for sector in circos.sectors:
-    track = sector.add_track((60, 70))
-    track.axis(fc=chr_colour)
-    track.text(sector.name, color=chr_name_colour, size=12)
-    track.xticks_by_interval(10000)
-
-starts = finds[:,0]
-ends = finds[:,2]
-names = func(finds)
 
 
-def delly_func(finds, circos):
-    global percentile, cmap
-    names = np.log(finds[:, 4]/finds[:, 6])
+def delly_func(labels, finds, circos):
+    names = labels
     
-    sm = ScalarMappable(norm=Normalize(vmin=np.percentile(widths, percentile    ),
-                                       vmax=np.percentile(widths, 100 - percentile    )),
-                    cmap=cmap)
-    colour_map = sm.to_rgba(widths)
-    circos.colorbar(vmin=np.percentile(widths, percentile),
-                    vmax=np.percentile(widths, 100 - percentile),
-                    cmap=cmap,
-                    colorbar_kws=dict(label="log-liklihood"))
+    colour_map = ["green" if name.startswith("DUP") else
+     "yellow" if name.startswith("INV") else
+     "red" if name.startswith("DEL") else None
+     for name in names]
+    
+    line_handles = [
+        Line2D([], [], color="green", label="DUP"),
+        Line2D([], [], color="yellow", label="INV"),
+        Line2D([], [], color="red", label="DEL"),
+    ]
+    circos.ax.legend(
+        handles=line_handles,
+        bbox_to_anchor=(0.5, 0.5),
+        loc="center",
+        title="Delly feature",
+        handlelength=2,
+    )
     return colour_map
 
 
-def my_func(name):
-    if name.startswith("DUP"):
-        return "green"
-    if name.startswith("INV"):
-        return "yellow"
-    if name.startswith("DEL"):
-        return "red"
-
-for t1, t2, name in zip(starts, ends, names):
-    circos.link_line((f"{CHRNAME}", t1), (f"{CHRNAME}", t2),
-                     lw=1, color=my_func(name))
-track2 = circos.sectors[0].add_track((80, 100), r_pad_ratio=0.1)
-track2.axis()
-track2.line(average_all_covers[0,:], average_all_covers[1,:], color=all_cover_colour)
-fig = circos.plotfig()
-line_handles = [
-    Line2D([], [], color="green", label="DUP"),
-    Line2D([], [], color="yellow", label="INV"),
-    Line2D([], [], color="red", label="DEL"),
-]
-circos.ax.legend(
-    handles=line_handles,
-    bbox_to_anchor=(0.5, 0.5),
-    loc="center",
-    title="Delly feature",
-    handlelength=2,
-)
-fig.savefig(f"{OUTDIR}/Circle.svg", bbox_inches="tight")
-fig.savefig(f"{OUTDIR}/Circle.png", bbox_inches="tight")
+PlotCircle(average_covers, average_all_covers, labels, finds,
+               CHRNAME,
+               OUTDIR = "./cls_plots",
+               chr_colour = "red",
+               chr_name_colour = "white",
+               cover_colour = "blue",
+               all_cover_colour = "green",
+               percentile = 10,
+               cmap = "RdPu",
+               func=None)

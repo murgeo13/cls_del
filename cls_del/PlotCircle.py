@@ -10,9 +10,8 @@ from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
-plt.rcParams.update({'font.size': 22})
 
-def PlotCircle(average_covers, average_all_covers, finds,
+def PlotCircle(average_covers, average_all_covers, labels, finds,
                CHRNAME,
                OUTDIR = "./cls_plots",
                chr_colour = "red",
@@ -50,21 +49,37 @@ def PlotCircle(average_covers, average_all_covers, finds,
         Percenteile to cut extremly high and low likliehood in colormap. The default is 10.
     cmap : str or matplotlib.colors.Colormap, optional
         Colormap for gradient by finds' liklihoods. The default is "RdPu".
-    func : func
+    func : function(labels, finds, circos)
         Function generating colours for each find and adding special legend to plot.
+        Parameters
+        ----------
+        labels : np.array
+            name of each cluster
+        finds : list or other iterable
+            row for each cluster includes
+            First_mean First_std Second_mean Second_std Supporting_reads Total_reads Expected_count
+        circos : pycirclize.circos.Circos
+            plot of chromosome
+
+        Returns
+        -------
+        colour_map : np.array
+            colour for each find
 
     Returns
     -------
     None.
 
     """
-    def default_func(finds, circos):
+    def default_func(labels, finds, circos):
         """
-        
+        Function generating colours for each find and adding special legend to plot.
 
         Parameters
         ----------
-        finds : np.array
+        labels : np.array
+            name of each cluster
+        finds : list or other iterable
             row for each cluster includes
             First_mean First_std Second_mean Second_std Supporting_reads Total_reads Expected_count
         circos : pycirclize.circos.Circos
@@ -88,10 +103,10 @@ def PlotCircle(average_covers, average_all_covers, finds,
                         cmap=cmap,
                         colorbar_kws=dict(label="log-liklihood"))
         return colour_map
-
+    
     if func is None:
         func = default_func
-                 
+    
     LEN = average_covers.shape[1]
       
     sectors = {f"{CHRNAME}" : LEN}
@@ -104,7 +119,7 @@ def PlotCircle(average_covers, average_all_covers, finds,
     
     starts = finds[:,0]
     ends = finds[:,2]
-    colours = default_func(finds, circos)
+    colours = default_func(labels, finds, circos)
     
     for t1, t2, colour in zip(starts, ends, colours):
         circos.link_line((f"{CHRNAME}", t1), (f"{CHRNAME}", t2),
