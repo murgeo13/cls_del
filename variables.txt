@@ -1,25 +1,30 @@
-# переменные для script.sh
+# variables for cls_del.sh
 
-ref_dir="/path/to/dir/SC288c_bowtie/" # папка для индексов
-ref="/path/to/dir/GCF_000146045.2_R64_genomic.fna" # референс .fna
-indexes=${ref_dir}/SC288c # путь к индексам (название файлов без .1.bt2)
-work_dir="/path/to/dir" # основная папка
-out_dir="./results"
-log_dir="${out_dir}/log"
+ref_dir="/path/to/dir/SC288c_bowtie/" # directory for indeces
+ref="/path/to/dir/GCF_000146045.2_R64_genomic.fna" # reference genome .fna
+indexes=${ref_dir}/SC288c # path to indeces (filenames without .1.bt2)
+out_dir="./results" # directory for output
+log_dir="${out_dir}/log" # directory for logs
+
+# paths to .fastq
+work_dir="/path/to/dir" 
 common_F=${work_dir}/reads/wt/DK_wt_61_TGACCA_L008_R1_
 common_R=${work_dir}/reads/wt/DK_wt_61_TGACCA_L008_R2_
-in_F=${common_F}001.fastq.gz,${common_F}002.fastq.gz,${common_F}003.fastq.gz # прямые чтения
-in_R=${common_R}001.fastq.gz,${common_R}002.fastq.gz,${common_R}003.fastq.gz # обратные чтения
+in_F=${common_F}001.fastq.gz,${common_F}002.fastq.gz,${common_F}003.fastq.gz # forward reads
+in_R=${common_R}001.fastq.gz,${common_R}002.fastq.gz,${common_R}003.fastq.gz # backward reads
 
-out_dir="./"
-index_name=SC288c_bowtie
-sam=${out_dir}/${index_name}.sam # выходной sam файл
-bam=${out_dir}/${index_name}.bam # выходной bam файл
-chr=NC_001224.1 # имя хромосомы
-bam_on_chr=${out_dir}/${index_name}_on_${chr}.bam # файл чтений, картированных на хромосому
-bam_filtered=${out_dir}/${index_name}_on_${chr}_filterd.bam # файл чтений, картированных на хромосому с большим TLEN
+index_name=SC288c_bowtie #prefix for filenames
+sam=${out_dir}/${index_name}.sam # output .sam
+bam=${out_dir}/${index_name}.bam # output .bam
+chr=NC_001224.1 # chromosome name
+bam_on_chr=${out_dir}/${index_name}_on_${chr}.bam # file with reads mapped to chr
+bam_filtered=${out_dir}/${index_name}_on_${chr}_filterd.bam # file with reads mapped to chr with large TLEN
+
+# Delly output files
 delly_out_bcf=${out_dir}/delly_${index_name}_on_${chr}.bcf
 delly_out_vcf=${out_dir}/delly_${index_name}_on_${chr}.vcf
+
+# picard CollectInsertSizeMetrics output files
 TLEN_txt=${out_dir}/insert_size_metrics.txt
 TLEN_pdf=${out_dir}/insert_size_metrics.pdf
 TLEN_var=${out_dir}/insert_size_var.txt
