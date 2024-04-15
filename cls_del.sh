@@ -27,7 +27,7 @@ samtools view -h -bS ${bam} ${chr} 1> ${bam_on_chr} 2>>${log_dir}/samtools.log
 # индексируем правильный bam файл
 echo "индексируем правильный bam файл" 1>> ${log_dir}/samtools.log
 samtools index ${bam_on_chr}
-samtools mpileup ${bam_on_chr} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o all_cover.txt
+samtools mpileup ${bam_on_chr} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o ${out_dir}/all_cover.txt
 
 #используем delly
 echo "Поиск перестроек с помощью Delly"
@@ -45,9 +45,9 @@ echo "Получение чтений, картированных на хром�
 samtools view --input-fmt-option filter="tlen>${MEDIAN_INSERT_SIZE}+3*${MEDIAN_ABSOLUTE_DEVIATION} || tlen<-${MEDIAN_INSERT_SIZE}-3*${MEDIAN_ABSOLUTE_DEVIATION}" \
 -bS ${bam_on_chr} 1> ${bam_filtered} 2>>${log_dir}/samtools.log
 
-samtools mpileup ${bam_filtered} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o filtered_cover.txt
+samtools mpileup ${bam_filtered} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o ${out_dir}/filtered_cover.txt
 
 #python
-echo "python is started"
-python ./cls_del/main.py --chr ${chr} --chrcov filtered_cover.txt --chrcov-total all_cover.txt--median ${MEDIAN_INSERT_SIZE} --sd ${MEDIAN_ABSOLUTE_DEVIATION} \
---out ./python_out_new --save-temp-files --debug
+python ./cls_del/main.py --chr ${chr} --chrcov ${out_dir}/filtered_cover.txt --chrcov-total ${out_dir}/all_cover.txt \
+--median ${MEDIAN_INSERT_SIZE} --sd ${MEDIAN_ABSOLUTE_DEVIATION} \
+--out ./python_out_new --save-temp-files --debug  2>>${log_dir}/python.log
