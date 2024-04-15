@@ -69,6 +69,7 @@ FEATURESPICKLE = f"{args.out}/features.pikle"
 os.makedirs(OUTDIR, exist_ok=True)
 
 if args.debug:
+    print("Loading variables from existing .pikle")
     try:
         with open(DOTSPICKLE, 'rb') as inp:
             cover = pickle.load(inp)
@@ -81,6 +82,7 @@ if args.debug:
             average_all_covers = pickle.load(inp)
             d_clusters = pickle.load(inp)
         with open(FEATURESPICKLE, 'rb') as inp:
+            labels = pickle.load(inp)
             finds = pickle.load(inp)
     except:
         pass
@@ -88,23 +90,28 @@ if args.debug:
 
 try:
     cover, dots
-except:            
+except:
+    print("RememberDots(CHRCOV, CHRNAME) is started")            
     cover, dots = RememberDots(CHRCOV, CHRNAME)
     with open(DOTSPICKLE, 'wb') as out:
         pickle.dump(cover, out)
         pickle.dump(dots, out)
+    print("RememberDots(CHRCOV, CHRNAME) is done")
 
 try:
     all_cover, all_dots
 except: 
+    print("RememberDots(CHRCOV_TOTAL, CHRNAME) is started")
     all_cover, all_dots = RememberDots(CHRCOV_TOTAL, CHRNAME)
     with open(DOTSPICKLE_TOTAL, 'wb') as out:
         pickle.dump(all_cover, out)
         pickle.dump(all_dots, out)
+    print("RememberDots(CHRCOV_TOTAL, CHRNAME) is done")
     
 try:
     average_covers, average_all_covers, d_clusters
 except:
+    print("DoubleClusterDots(*args) is started")
     average_covers, average_all_covers, d_clusters = DoubleClusterDots(cover, dots, all_cover,
                                                                        MEDIAN, SD, METRIC, MIN_SIZE,
                                                                        SELECTION, OUTTSV)
@@ -112,19 +119,26 @@ except:
         pickle.dump(average_covers, out)
         pickle.dump(average_all_covers, out)
         pickle.dump(d_clusters, out)
+    print("DoubleClusterDots(*args) is done")
 
 PlotCluster(d_clusters, OUTDIR)
 
 try:
-    finds
+    labels, finds
 except:
-    finds = MakeFeatures(average_covers, average_all_covers, d_clusters, FEATURETSV)
+    print("MakeFeatures(*args) is started")
+    labels, finds = MakeFeatures(average_covers, average_all_covers, d_clusters, FEATURETSV)
     with open(FEATURESPICKLE, 'wb') as out:
+        pickle.dump(labels, out)
         pickle.dump(finds, out)
-    
-PlotCircle(average_covers, average_all_covers, finds, CHRNAME, OUTDIR)
+    print("MakeFeatures(*args) is done")
+
+print("PlotCircle(*args) is started")    
+PlotCircle(average_covers, average_all_covers, labels, finds, CHRNAME, OUTDIR)
+print("PlotCircle(*args) is started")
 
 if not args.save_temp_files:
+    print("Removing all temportary files")
     os.remove(DOTSPICKLE)
     os.remove(CLSPICKLE)
     os.remove(FEATURESPICKLE)

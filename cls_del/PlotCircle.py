@@ -18,9 +18,8 @@ def PlotCircle(average_covers, average_all_covers, labels, finds,
                chr_name_colour = "white",
                cover_colour = "blue",
                all_cover_colour = "green",
-               percentile = 10,
-               cmap = "RdPu",
-               func=None):
+               func=None,
+               **funckwargs):
     """
     Plot chromosome map with deletions coloured by liklihood.
 
@@ -71,7 +70,7 @@ def PlotCircle(average_covers, average_all_covers, labels, finds,
     None.
 
     """
-    def default_func(labels, finds, circos):
+    def default_func(labels, finds, circos, percentile=10, cmap="RdPu"):
         """
         Function generating colours for each find and adding special legend to plot.
 
@@ -91,10 +90,10 @@ def PlotCircle(average_covers, average_all_covers, labels, finds,
             colour for each find
 
         """
-        global percentile, cmap
+        
         widths = np.log(finds[:, 4]/finds[:, 6])
         
-        sm = ScalarMappable(norm=Normalize(vmin=np.percentile(widths, percentile    ),
+        sm = ScalarMappable(norm=Normalize(vmin=np.percentile(widths, percentile),
                                            vmax=np.percentile(widths, 100 - percentile    )),
                         cmap=cmap)
         colour_map = sm.to_rgba(widths)
@@ -119,19 +118,19 @@ def PlotCircle(average_covers, average_all_covers, labels, finds,
     
     starts = finds[:,0]
     ends = finds[:,2]
-    colours = default_func(labels, finds, circos)
+    colours = default_func(labels, finds, circos, **funckwargs)
     
     for t1, t2, colour in zip(starts, ends, colours):
         circos.link_line((f"{CHRNAME}", t1), (f"{CHRNAME}", t2),
                          lw=1, color=colour)
     track2 = circos.sectors[0].add_track((80, 100), r_pad_ratio=0.1)
     track2.axis()
-    track2.line(average_all_covers[0,:], average_all_covers[1,:], color=all_cover_colour)
-    track2.line(average_covers[0,:], average_covers[1,:], color=cover_colour)
+    track2.line(average_all_covers[0,:], average_all_covers[1,:], lw=1, color=all_cover_colour)
+    track2.line(average_covers[0,:], average_covers[1,:], lw=1, color=cover_colour)
     fig = circos.plotfig()
     line_handles = [
-        Line2D([], [], color=all_cover_colour, label="with all mapped reads"),
-        Line2D([], [], color=cover_colour, label="with reads used in clusterisation"),
+        Line2D([], [], linewidth=1, color=all_cover_colour, label="with all mapped reads"),
+        Line2D([], [], linewidth=1, color=cover_colour, label="with reads used in clusterisation"),
     ]
     circos.ax.legend(
         handles=line_handles,
@@ -139,6 +138,6 @@ def PlotCircle(average_covers, average_all_covers, labels, finds,
         loc="center",
         title="Averege cover",
         handlelength=2,
-    )
+        frameon=True)
     fig.savefig(f"{OUTDIR}/Circle.svg", bbox_inches="tight")
     fig.savefig(f"{OUTDIR}/Circle.png", bbox_inches="tight")
