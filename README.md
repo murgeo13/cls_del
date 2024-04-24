@@ -1,7 +1,8 @@
 # cls_del
 Algorithm for searching deletions in mtDNA based on NGS data. Originally, this was written for yeast.
 
-![image](https://github.com/murgeo13/cls_del/assets/166647253/86303faa-37e4-49f2-88ef-d212b617b676)
+![image](https://github.com/murgeo13/cls_del/assets/166647253/98028cb3-8401-466e-bb6e-6c499878f239)
+
 
 
 # Dependences
