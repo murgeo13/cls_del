@@ -61,3 +61,5 @@ samtools mpileup ${bam_filtered} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o ${
 python ./cls_del/main.py --chr ${chr} --chrcov ${out_dir}/filtered_cover.txt --chrcov-total ${out_dir}/all_cover.txt \
 --median ${MEDIAN_INSERT_SIZE} --sd ${MEDIAN_ABSOLUTE_DEVIATION} \
 --out ./python_out_new --save-temp-files --debug  2>>${log_dir}/python.log
+
+python ./cover_plot.py --strain ${strain} --chr ${chr} --cntrchr ${cntr} --chrcov ${out_dir}/all_cover.txt --cntrcov ${out_dir}/nuclear_cover.txt --lang EN
