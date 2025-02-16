@@ -43,3 +43,5 @@ delly_out_vcf=${out_dir}/delly_${index_name}_on_${mitochr}.vcf
 TLEN_txt=${out_dir}/insert_size_metrics.txt
 TLEN_pdf=${out_dir}/insert_size_metrics.pdf
 TLEN_var=${out_dir}/insert_size_var.txt
+
+TLEN_thr=default # TLEN treshold for reads clusterisation. By default TLEN_thr=${MEDIAN_INSERT_SIZE}+3*${MEDIAN_ABSOLUTE_DEVIATION}
