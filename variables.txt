@@ -1,9 +1,10 @@
 # variables for cls_del.sh
 
 strain="name_of_strain"
-mode=2 # mode=0 for plotting chromosome cover
-       # mode=1 for deletion search
-       # mode=2 for both
+mode=7 # mode=1 for plotting chromosome cover
+       # mode=2 for deletion search with cls_del
+       # mode=4 for SVs search with Delly
+       # mode=7 for everything, everywhere and all at once :)
 
 ref_dir="/path/to/dir/W303_bowtie/" # directory for indeces
 ref="/path/to/dir/GCA_002163515.1_ASM216351v1_genomic.fna" # reference genome .fna
