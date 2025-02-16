@@ -17,7 +17,7 @@ then
 else
   if [ -v in_F ] && [ -v in_R ]
   then
-    bowtie2 -p 10 -x ${indexes} --interleaved ${reads} -S ${sam} 2>${log_dir}/bowtie2.log
+    bowtie2 -p 10 -x ${indexes} -1 ${in_F} -2 ${in_R} -S ${sam} 2>${log_dir}/bowtie2.log
     echo "reads are maped"
   fi
 fi
