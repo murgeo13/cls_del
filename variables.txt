@@ -1,6 +1,6 @@
 # variables for cls_del.sh
 
-strain=
+strain="name_of_strain"
 
 ref_dir="/path/to/dir/W303_bowtie/" # directory for indeces
 ref="/path/to/dir/GCA_002163515.1_ASM216351v1_genomic.fna" # reference genome .fna
@@ -17,18 +17,19 @@ in_R=${common_R}001.fastq.gz,${common_R}002.fastq.gz,${common_R}003.fastq.gz # b
 
 # or you can use interleaved reads
 #reads=${work_dir}/reads.fastq.gz
-#cntr=CM007964.1
 index_name=W303_bowtie #prefix for filenames
 sam=${out_dir}/${index_name}.sam # output .sam
 bam=${out_dir}/${index_name}.bam # output .bam
-chr=CM007981.1 # chromosome name
+mitochr=CM007981.1 # mitochromosome name
+cntrchr=CM007964.1 # control chromosom name
 
-bam_on_chr=${out_dir}/${index_name}_on_${chr}.bam # file with reads mapped to chr
-bam_filtered=${out_dir}/${index_name}_on_${chr}_filterd.bam # file with reads mapped to chr with large TLEN
+bam_on_mitochr=${out_dir}/${index_name}_on_${mitochr}.bam # file with reads mapped to mitochr
+bam_filtered=${out_dir}/${index_name}_on_${mitochr}_filterd.bam # file with reads mapped to mitochr with large TLEN
+bam_on_cntrchr=${out_dir}/${index_name}_on_${cntrchr}.bam # file with reads mapped to cntrchr
 
 # Delly output files
-delly_out_bcf=${out_dir}/delly_${index_name}_on_${chr}.bcf
-delly_out_vcf=${out_dir}/delly_${index_name}_on_${chr}.vcf
+delly_out_bcf=${out_dir}/delly_${index_name}_on_${mitochr}.bcf
+delly_out_vcf=${out_dir}/delly_${index_name}_on_${mitochr}.vcf
 
 # picard CollectInsertSizeMetrics output files
 TLEN_txt=${out_dir}/insert_size_metrics.txt
