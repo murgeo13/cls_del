@@ -1,5 +1,7 @@
 # variables for cls_del.sh
 
+strain=
+
 ref_dir="/path/to/dir/W303_bowtie/" # directory for indeces
 ref="/path/to/dir/GCA_002163515.1_ASM216351v1_genomic.fna" # reference genome .fna
 indexes=${ref_dir}/SC288c # path to indeces (filenames without .1.bt2)
