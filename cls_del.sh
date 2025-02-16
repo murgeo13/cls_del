@@ -9,16 +9,16 @@ mkdir -p ${out_dir}
 bowtie2-build ${ref} ${indexes} &>${log_dir}/bowtie2-build.log
 echo "indexes are made"
 
-# map reads
+# mapping reads
 if [ -v reads ]
 then
   bowtie2 -p 10 -x ${indexes} --interleaved ${reads} -S ${sam} 2>${log_dir}/bowtie2.log
-  echo "reads are maped"
+  echo "reads are mapped"
 else
   if [ -v in_F ] && [ -v in_R ]
   then
     bowtie2 -p 10 -x ${indexes} -1 ${in_F} -2 ${in_R} -S ${sam} 2>${log_dir}/bowtie2.log
-    echo "reads are maped"
+    echo "reads are mapped"
   fi
 fi
 
@@ -32,12 +32,12 @@ samtools index ${bam} 2>${log_dir}/bam_index.log
 echo "${bam} is indexed"
 
 # get reads mapped to control chromosome
-echo "getting reads mapped to ${cntr}" 1>> ${log_dir}/samtools.log
-samtools view -h -bS ${bam} ${cntr} 1> ${bam_on_cntr} 2>>${log_dir}/samtools.log
+echo "getting reads mapped to ${cntrchr}" 1>> ${log_dir}/samtools.log
+samtools view -h -bS ${bam} ${cntrchr} 1> ${bam_on_cntrchr} 2>>${log_dir}/samtools.log
 # index bam
-echo "indexing of ${bam_on_cntr}" 1>> ${log_dir}/samtools.log
-samtools index ${bam_on_cntr}
-samtools mpileup ${bam_on_cntr} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o ${out_dir}/control_cover.txt
+echo "indexing of ${bam_on_cntrchr}" 1>> ${log_dir}/samtools.log
+samtools index ${bam_on_cntrchr}
+samtools mpileup ${bam_on_cntrchr} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o ${out_dir}/control_cover.txt
 
 # get reads mapped to mitochromosome
 echo "getting reads mapped to ${mitochr}" 1>> ${log_dir}/samtools.log
@@ -70,4 +70,4 @@ python ./cls_del/main.py --chr ${mitochr} --chrcov ${out_dir}/filtered_mito_cove
 --median ${MEDIAN_INSERT_SIZE} --sd ${MEDIAN_ABSOLUTE_DEVIATION} \
 --out ./python_out_new --save-temp-files --debug  2>>${log_dir}/python.log
 
-python ./cover_plot.py --strain ${strain} --chr ${mitochr} --cntrchr ${cntr} --chrcov ${out_dir}/all_mito_cover.txt --cntrcov ${out_dir}/control_cover.txt --lang EN
+python ./cover_plot.py --strain ${strain} --chr ${mitochr} --cntrchr ${cntrchr} --chrcov ${out_dir}/all_mito_cover.txt --cntrcov ${out_dir}/control_cover.txt --lang EN
