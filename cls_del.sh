@@ -99,17 +99,23 @@ cat <(echo -en "filtered_mito_cover.txt has been made\t") <(date) 1>>${log_dir}/
 
 
 # python
-if [ mode = 0] || [ mode = 2 ]
+if [ $(( mode & 1 )) = 1 ]
 then
-  python ./cover_plot.py --strain ${strain} --chr ${mitochr} --cntrchr ${cntrchr} \
+  python ./cover_plot.py --strain ${strain} --chr ${mitochr} --cntrchr ${cntrchr} --window 2*3*${MEDIAN_ABSOLUTE_DEVIATION} \
   --chrcov ${out_dir}/all_mito_cover.txt --cntrcov ${out_dir}/control_cover.txt --lang EN
   --out ./python_out 2>>${log_dir}/python.log
 fi
-
-if [ mode = 1] || [ mode = 2 ]
+mode=$(( mode >> 1 ))
+if [ $(( mode & 1 )) = 1 ]
 then
   python ./cls_del/main.py --chr ${mitochr} --chrcov ${out_dir}/filtered_mito_cover.txt --chrcov-total ${out_dir}/all_mito_cover.txt \
   --median ${MEDIAN_INSERT_SIZE} --sd ${MEDIAN_ABSOLUTE_DEVIATION} \
   --out ./python_out --save-temp-files --debug  2>>${log_dir}/python.log
 fi
-
+mode=$(( mode >> 1 ))
+if [ $(( mode & 1 )) = 1 ]
+then
+  python ./cls_sel/for_delly.py --delly-vcf ${delly_out_vcf} --chrcov-total ${out_dir}/all_mito_cover.txt \
+  --chrname ${mitochr} --window 2*3*${MEDIAN_ABSOLUTE_DEVIATION} \
+  --out ./python_out --save-temp-files --debug
+fi
