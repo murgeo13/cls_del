@@ -31,13 +31,21 @@ echo "indexing of ${bam}" 1>> ${log_dir}/samtools.log
 samtools index ${bam} 2>${log_dir}/bam_index.log
 echo "${bam} is indexed"
 
+# get reads mapped to control chromosome
+echo "getting reads mapped to ${cntr}" 1>> ${log_dir}/samtools.log
+samtools view -h -bS ${bam} ${cntr} 1> ${bam_on_cntr} 2>>${log_dir}/samtools.log
+# index bam
+echo "indexing of ${bam_on_cntr}" 1>> ${log_dir}/samtools.log
+samtools index ${bam_on_cntr}
+samtools mpileup ${bam_on_cntr} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o ${out_dir}/control_cover.txt
+
 # get reads mapped to mitochromosome
 echo "getting reads mapped to ${mitochr}" 1>> ${log_dir}/samtools.log
 samtools view -h -bS ${bam} ${mitochr} 1> ${bam_on_mitochr} 2>>${log_dir}/samtools.log
 # index bam
 echo "indexing of ${bam_on_mitochr}" 1>> ${log_dir}/samtools.log
 samtools index ${bam_on_mitochr}
-samtools mpileup ${bam_on_mitochr} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o ${out_dir}/all_cover.txt
+samtools mpileup ${bam_on_mitochr} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o ${out_dir}/all_mito_cover.txt
 
 # Delly
 echo "discovering of SVs with Delly"
@@ -55,11 +63,11 @@ echo "getting reads mapped to ${mitochr} with large TLEN" 1>> ${log_dir}/samtool
 samtools view --input-fmt-option filter="tlen>${MEDIAN_INSERT_SIZE}+3*${MEDIAN_ABSOLUTE_DEVIATION} || tlen<-${MEDIAN_INSERT_SIZE}-3*${MEDIAN_ABSOLUTE_DEVIATION}" \
 -bS ${bam_on_mitochr} 1> ${bam_filtered} 2>>${log_dir}/samtools.log
 
-samtools mpileup ${bam_filtered} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o ${out_dir}/filtered_cover.txt
+samtools mpileup ${bam_filtered} -A --output-extra FLAG,POS,RNEXT,PNEXT -a -o ${out_dir}/filtered_mito_cover.txt
 
 # python
-python ./cls_del/main.py --chr ${mitochr} --chrcov ${out_dir}/filtered_cover.txt --chrcov-total ${out_dir}/all_cover.txt \
+python ./cls_del/main.py --chr ${mitochr} --chrcov ${out_dir}/filtered_mito_cover.txt --chrcov-total ${out_dir}/all_mito_cover.txt \
 --median ${MEDIAN_INSERT_SIZE} --sd ${MEDIAN_ABSOLUTE_DEVIATION} \
 --out ./python_out_new --save-temp-files --debug  2>>${log_dir}/python.log
 
-python ./cover_plot.py --strain ${strain} --chr ${mitochr} --cntrchr ${cntr} --chrcov ${out_dir}/all_cover.txt --cntrcov ${out_dir}/nuclear_cover.txt --lang EN
+python ./cover_plot.py --strain ${strain} --chr ${mitochr} --cntrchr ${cntr} --chrcov ${out_dir}/all_mito_cover.txt --cntrcov ${out_dir}/control_cover.txt --lang EN
