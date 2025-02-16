@@ -31,6 +31,14 @@ def PlotCluster(d_clusters,
         if i[0] == -1:
             continue
         cl = d_clusters[i]
+        n_dim = len(cl.shape)
+        if n_dim == 1:
+            cl = np.array([cl])
+        elif n_dim == 2:
+            cl = cl
+        else:
+            cl = []
+            print(f"Cluster {i} is wierd")        
         for dot in cl:
             x, y, flag = dot
             if flag in [65, 113, 129, 177]:

@@ -34,9 +34,9 @@ parser.add_argument("--out", type=str, required=False, default="./",
                     help='Path to output default="./"')
 group1 = parser.add_argument_group("Seletion of flags",
                                   "If both --select and --exlude are unused, all flags will selected").add_mutually_exclusive_group()
-group1.add_argument("--select", type=list, required=False, default=[],
+group1.add_argument("--select", type=int, required=False, default=[], nargs="+",
                    help="Select ONLY flags in LIST")
-group1.add_argument("--exclude", type=list, required=False, default=[],
+group1.add_argument("--exclude", type=int, required=False, default=[], nargs="+",
                    help="Select all exept flags in LIST")
 parser.add_argument("--save-temp-files", action="store_true", required=False, default=False,
                     help="Saving of temporary .pikle files")
