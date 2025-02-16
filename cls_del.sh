@@ -86,8 +86,12 @@ picard CollectInsertSizeMetrics -I ${bam_on_mitochr} -O ${TLEN_txt} -H ${TLEN_pd
 grep -v ^# ${TLEN_txt} | sed -n "2,3p" | datamash transpose --output-delimiter="=" 1> ${TLEN_var}
 
 source ${TLEN_var}
+if [ TLEN_trh = 0 ]
+then
+  TLEN_trh=${MEDIAN_INSERT_SIZE}+3*${MEDIAN_ABSOLUTE_DEVIATION}
+fi
 echo "getting reads mapped to ${mitochr} with large TLEN"
-samtools view --input-fmt-option filter="tlen>${MEDIAN_INSERT_SIZE}+3*${MEDIAN_ABSOLUTE_DEVIATION} || tlen<-${MEDIAN_INSERT_SIZE}-3*${MEDIAN_ABSOLUTE_DEVIATION}" \
+samtools view --input-fmt-option filter="tlen>${TLEN_trh} || tlen<-${TLEN_trh}" \
 -bS ${bam_on_mitochr} 1> ${bam_filtered} 2>>${log_dir}/cls_del.log
 echo "reads mapped to ${mitochr} with large TLEN are in ${bam_on_mitochr}"
 cat <(echo -en "reads mapped to ${mitochr} with large TLEN are in ${bam_on_mitochr}\t") <(date) 1>>${log_dir}/cls_del.log
