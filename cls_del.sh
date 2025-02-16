@@ -86,7 +86,7 @@ picard CollectInsertSizeMetrics -I ${bam_on_mitochr} -O ${TLEN_txt} -H ${TLEN_pd
 grep -v ^# ${TLEN_txt} | sed -n "2,3p" | datamash transpose --output-delimiter="=" 1> ${TLEN_var}
 
 source ${TLEN_var}
-if [ TLEN_trh = 0 ]
+if [ TLEN_trh = "default" ]
 then
   TLEN_trh=${MEDIAN_INSERT_SIZE}+3*${MEDIAN_ABSOLUTE_DEVIATION}
 fi
