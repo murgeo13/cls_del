@@ -8,6 +8,7 @@ from sklearn.cluster import DBSCAN
 from sklearn.cluster import KMeans
 from sklearn.utils._param_validation import InvalidParameterError
 from sklearn.metrics.pairwise import pairwise_distances
+from scipy import spatial
 import numpy as np
 import copy
 
@@ -26,7 +27,12 @@ def _calculate_cluster_size(X, metric):
         Cluster's size
 
     """
-    distances = pairwise_distances(X, X, metric=metric)
+    try:
+        distances = pairwise_distances(X, X, metric=metric)
+    except MemoryError:
+        ch = spatial.ConvexHull(X) #for memory optimization on next step
+        hull = X[ch.vertices]
+        distances = pairwise_distances(hull, hull, metric=metric)
     return np.max(distances)
 
 def _constant(C):
