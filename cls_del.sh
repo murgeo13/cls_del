@@ -16,13 +16,13 @@ cat <(echo -en "indexes have been made\t") <(date) 1>>${log_dir}/cls_del.log
 echo "mapping reads"
 if [ -v reads ]
 then
-  bowtie2 -p 10 -x ${indexes} --interleaved ${reads} -S ${sam} 2>${log_dir}/cls_del.log
+  bowtie2 -p 10 -x ${indexes} --interleaved ${reads} -S ${sam} 2>>${log_dir}/cls_del.log
   echo "reads have been mapped"
   cat <(echo -en "reads have been mapped\t") <(date) 1>>${log_dir}/cls_del.log
 else
   if [ -v in_F ] && [ -v in_R ]
   then
-    bowtie2 -p 10 -x ${indexes} -1 ${in_F} -2 ${in_R} -S ${sam} 2>${log_dir}/cls_del.log
+    bowtie2 -p 10 -x ${indexes} -1 ${in_F} -2 ${in_R} -S ${sam} 2>>${log_dir}/cls_del.log
   echo "reads have been mapped"
   cat <(echo -en "reads have been mapped\t") <(date) 1>>${log_dir}/cls_del.log
   fi
@@ -86,9 +86,9 @@ picard CollectInsertSizeMetrics -I ${bam_on_mitochr} -O ${TLEN_txt} -H ${TLEN_pd
 grep -v ^# ${TLEN_txt} | sed -n "2,3p" | datamash transpose --output-delimiter="=" 1> ${TLEN_var}
 
 source ${TLEN_var}
-if [ TLEN_trh = "default" ]
+if [ ${TLEN_trh} = "default" ]
 then
-  TLEN_trh=${MEDIAN_INSERT_SIZE}+3*${MEDIAN_ABSOLUTE_DEVIATION}
+  TLEN_trh=$(( ${MEDIAN_INSERT_SIZE}+3*${MEDIAN_ABSOLUTE_DEVIATION} ))
 fi
 echo "getting reads mapped to ${mitochr} with large TLEN"
 samtools view --input-fmt-option filter="tlen>${TLEN_trh} || tlen<-${TLEN_trh}" \
@@ -105,8 +105,8 @@ cat <(echo -en "filtered_mito_cover.txt has been made\t") <(date) 1>>${log_dir}/
 # python
 if [ $(( mode & 1 )) = 1 ]
 then
-  python ./cover_plot.py --strain ${strain} --chr ${mitochr} --cntrchr ${cntrchr} --window 2*3*${MEDIAN_ABSOLUTE_DEVIATION} \
-  --chrcov ${out_dir}/all_mito_cover.txt --cntrcov ${out_dir}/control_cover.txt --lang EN
+  python ./cover_plot.py --strain ${strain} --chr ${mitochr} --cntrchr ${cntrchr} --window $((2*3*${MEDIAN_ABSOLUTE_DEVIATION})) \
+  --chrcov ${out_dir}/all_mito_cover.txt --cntrcov ${out_dir}/control_cover.txt --lang EN \
   --out ./python_out 2>>${log_dir}/python.log
 fi
 mode=$(( mode >> 1 ))
@@ -119,7 +119,7 @@ fi
 mode=$(( mode >> 1 ))
 if [ $(( mode & 1 )) = 1 ]
 then
-  python ./cls_sel/for_delly.py --delly-vcf ${delly_out_vcf} --chrcov-total ${out_dir}/all_mito_cover.txt \
+  python ./cls_del/for_delly.py --delly-vcf ${delly_out_vcf} --chrcov-total ${out_dir}/all_mito_cover.txt \
   --chrname ${mitochr} --window 2*3*${MEDIAN_ABSOLUTE_DEVIATION} \
   --out ./python_out --save-temp-files --debug
 fi
