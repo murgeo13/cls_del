@@ -1,3 +1,6 @@
+# ACHTUNG!
+This project was suspended on December 14, 2025. If you would like to continue its development, please contact us  <murgeo13@fbb.msu.ru>
+
 # cls_del
 Algorithm for searching deletions in mtDNA based on NGS data. Originally, this was written for yeast.
 
